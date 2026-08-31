@@ -3,8 +3,8 @@ from fastapi import FastAPI, Query, Body
 from fastapi.responses import JSONResponse
 from typing import Optional
 from data.datablog import BlogData
+from modelos.postBlog import PostBase
 
-from pydantic import BaseModel
 """
 https://www.linkedin.com/in/moleculax/
 http://moleculaxapp.vercel.app
@@ -23,10 +23,12 @@ losDatos = BlogData()
 BLOG_POST = losDatos.objetoDatos()
 # ========================================================
 
-# Modelo Pydantic para crear posts
-class PostCreate(BaseModel):
-    title: str
-    Content: str
+
+
+# Aqui heredo de PostBase que esta en modelos
+class PostCreate(PostBase):
+    pass
+
 
 
 @app.get("/")
@@ -39,12 +41,7 @@ def home():
 
     return contenido
 
-# @app.get("/posts")
-# def post():
-#     response = {
-#         "data": BLOG_POST
-#     }
-#     return response
+
 
 # ======================================================
 # Path parameters
@@ -105,7 +102,7 @@ def list_post(
     }
 # ======================================================
 
-# Implemto metodo post
+# Implento metodo post
 @app.post("/posts")
 # Body(...) indica que es obligatorio enviar contenido
 # Los tres puntos se llaman elipsi

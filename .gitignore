@@ -125,8 +125,7 @@ htmlcov/
 .mypy_cache/
 *.cover
 .pytest_cache/
-test.db
-test.sqlite
+
 
 # ================================
 # Jupyter Notebooks
