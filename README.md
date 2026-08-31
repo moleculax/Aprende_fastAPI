@@ -35,7 +35,7 @@ Cada ejemplo está cuidadosamente comentado y diseñado para enseñar un concept
 
 ** Nivel Intermedio**
 
-**🚀 Nivel Avanzado**
+** Nivel Avanzado**
 
 ## 🛠️ Tecnologías Utilizadas
 
