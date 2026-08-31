@@ -3,7 +3,7 @@ from fastapi import FastAPI, Query, Body
 from fastapi.responses import JSONResponse
 from typing import Optional
 from data.datablog import BlogData
-from modelos.postBlog import PostBase
+from modelos.postBlog import PostBase, UpdatePost
 
 """
 https://www.linkedin.com/in/moleculax/
@@ -28,8 +28,10 @@ BLOG_POST = losDatos.objetoDatos()
 # Aqui heredo de PostBase que esta en modelos
 class PostCreate(PostBase):
     pass
+class ActualizaPost(UpdatePost):
+    pass
 
-
+# =============================================
 
 @app.get("/")
 def home():
@@ -130,7 +132,6 @@ def create_post(post: PostCreate = Body(...)):
                     "Content": post.Content
                     }
         # Agrego a la lista
-        # Agregar a la lista
         BLOG_POST.append(new_post)
 
         # Retornar respuesta
@@ -139,34 +140,37 @@ def create_post(post: PostCreate = Body(...)):
             "data": new_post
         }
     except Exception as e:
-        return e
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)}
+        )
 
 
 @app.put("/posts/{post_id}")
-def update_post(post_id: int, data: dict = Body(...)):
+def update_post(post_id: int, data: ActualizaPost = Body(...)):
     """Actualizar completamente un post existente"""
 
     for post in BLOG_POST:
         if post["id"] == post_id:
-            if "title" not in data or "Content" not in data:
+            if  not  data.Content not in data:
                 return JSONResponse(
                     status_code=400,
                     content={"error": "Title y Content son requeridos"}
                 )
 
-            if not data["title"].strip():
+            if not data.title.strip():
                 return JSONResponse(
                     status_code=400,
                     content={"error": "Title no puede estar vacio"}
                 )
-            if not data["Content"].strip():
+            if not data.Content.strip():
                 return JSONResponse(
                     status_code=400,
                     content={"error": "Content no puede estar vacio"}
                 )
 
-            post["title"] = data["title"]
-            post["Content"] = data["Content"]
+            post["title"] = data.title
+            post["Content"] = data.Content
 
             return {
                 "status": True,

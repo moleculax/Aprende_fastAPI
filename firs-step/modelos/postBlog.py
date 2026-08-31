@@ -5,3 +5,7 @@ class PostBase(BaseModel):
     title: str
     Content: str
 
+class UpdatePost(BaseModel):
+    title: str
+    Content: str
+
