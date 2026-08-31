@@ -39,7 +39,12 @@ pip install "fastapi[standard]"
 3. Instalar dependencias
 ````
 pip install -r requirements.txt
-El servidor se iniciará en 
+
+Ejecutamos:
+fastapi dev main.py
+
+El servidor se iniciará en: 
+
 http://localhost:8000
 ````
 Documentación de la API
