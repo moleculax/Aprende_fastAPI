@@ -2,34 +2,32 @@
 from fastapi import FastAPI, Query, Body
 from fastapi.responses import JSONResponse
 from typing import Optional
+from data.datablog import BlogData
 
 from pydantic import BaseModel
-
+"""
+https://www.linkedin.com/in/moleculax/
+http://moleculaxapp.vercel.app
+"""
+"""
+Este es un ejemplo basico sobre fastAPI
+"""
 app = FastAPI(
-    title="First Step Mini Blog",
-    description="API simple para un mini blog",
+    title="First Step",
+    description="API simple de fastAPI",
     version="1.0.0"
 )
+
+# Crear instancia para trae los datos que se mostraran
+losDatos = BlogData()
+BLOG_POST = losDatos.objetoDatos()
+# ========================================================
 
 # Modelo Pydantic para crear posts
 class PostCreate(BaseModel):
     title: str
     Content: str
 
-BLOG_POST = [
-            {"id": 1,
-             "title": "Desde FastAPI",
-             "Content": "Contenido 01"
-             },
-            {"id": 2,
-             "title": "Titulo Python",
-             "Content": "Contenido 02"
-             },
-            {"id": 3,
-             "title": "Titulo Django",
-             "Content": "Contenido 03"
-             }
-        ]
 
 @app.get("/")
 def home():
@@ -152,7 +150,7 @@ def update_post(post_id: int, data: dict = Body(...)):
     """Actualizar completamente un post existente"""
 
     for post in BLOG_POST:
-        if post["id"] == post_id:  # ✅ Cambiar post.id → post["id"]
+        if post["id"] == post_id:
             if "title" not in data or "Content" not in data:
                 return JSONResponse(
                     status_code=400,
@@ -170,8 +168,8 @@ def update_post(post_id: int, data: dict = Body(...)):
                     content={"error": "Content no puede estar vacio"}
                 )
 
-            post["title"] = data["title"]  #  Cambiar post.title → post["title"]
-            post["Content"] = data["Content"]  #  Cambiar post.Content → post["Content"]
+            post["title"] = data["title"]
+            post["Content"] = data["Content"]
 
             return {
                 "status": True,
