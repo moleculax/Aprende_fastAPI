@@ -1,0 +1,221 @@
+# ================================
+# Python
+# ================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pythonenv*
+
+# ================================
+# Distribución / Empaquetado
+# ================================
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ================================
+# IDEs y Editores
+# ================================
+# Visual Studio Code
+.vscode/
+.history/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+.pytest_cache/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*
+.\#*
+
+# ================================
+# Sistemas Operativos
+# ================================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.tmp
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Linux
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# ================================
+# Bases de Datos
+# ================================
+*.db
+*.sqlite
+*.sqlite3
+db_lite/
+*.db-journal
+
+# ================================
+# Logs
+# ================================
+*.log
+logs/
+*.log.*
+pytest.log
+
+# ================================
+# Archivos de Entorno
+# ================================
+.env
+.env.local
+.env.*.local
+*.local
+secrets.py
+config.py
+
+# ================================
+# Archivos de Pruebas
+# ================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+*.cover
+.pytest_cache/
+test.db
+test.sqlite
+
+# ================================
+# Jupyter Notebooks
+# ================================
+.ipynb_checkpoints/
+*.ipynb
+
+# ================================
+# Archivos de Proyecto
+# ================================
+*.pid
+*.seed
+*.pid.lock
+*.bak
+*.tmp
+*.temp
+
+# ================================
+# FastAPI específico
+# ================================
+# Archivos de datos generados
+data/
+*.pkl
+*.pickle
+*.parquet
+
+# ================================
+# Docker
+# ================================
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# ================================
+# Archivos de Dependencias
+# ================================
+# Si usas pipenv
+Pipfile
+Pipfile.lock
+
+# Si usas poetry
+poetry.lock
+pyproject.toml
+
+# ================================
+# Archivos de Backup
+# ================================
+*.backup
+*.old
+*.orig
+*.rej
+
+# ================================
+# Archivos de Compilación
+# ================================
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+
+# ================================
+# Archivos de Documentación Generados
+# ================================
+site/
+docs/_build/
+docs/api/
+*.doctree
+
+# ================================
+# Archivos de Pruebas de Carga
+# ================================
+*.jmx
+*.csv
+*.jtl
+
+# ================================
+# Profiling
+# ================================
+*.prof
+*.lprof
+
+# ================================
+# Archivos de Configuración Personal
+# ================================
+*.local.py
+*.development.py
+*.production.py
+config.local.ini
