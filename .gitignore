@@ -148,7 +148,6 @@ test.sqlite
 # FastAPI específico
 # ================================
 # Archivos de datos generados
-data/
 *.pkl
 *.pickle
 *.parquet

@@ -1,0 +1,42 @@
+
+class BlogData:
+    def objetoDatos(self):
+        data = [
+            {
+                "id": 1,
+                "title": "Introduccion a FastAPI",
+                "Content": "FastAPI es un framework web moderno y de alto rendimiento para construir APIs con Python. Esta basado en Starlette para las partes web y Pydantic para las partes de datos. Es uno de los frameworks mas rapidos disponibles, comparable con NodeJS y Go. Ofrece documentacion automatica interactiva, validacion de datos integrada y soporte para asincronia."
+            },
+            {
+                "id": 2,
+                "title": "Python: Mejores Practicas",
+                "Content": "Escribir codigo Python de calidad implica seguir las guias de estilo PEP 8, usar tipado estatico con mypy, aprovechar las list comprehensions y generadores, manejar excepciones correctamente, y escribir pruebas unitarias con pytest. Ademas, es importante mantener una arquitectura limpia y modular."
+            },
+            {
+                "id": 3,
+                "title": "Django vs FastAPI",
+                "Content": "Django es el framework web full-stack por excelencia en Python, ideal para aplicaciones grandes con admin integrado, ORM y autenticacion. FastAPI es mas ligero y orientado a APIs, con mayor rendimiento y facilidad para aplicaciones asincronas. La eleccion depende del proyecto: Django para aplicaciones complejas con frontend integrado, FastAPI para APIs puras y microservicios."
+            },
+            {
+                "id": 4,
+                "title": "Pydantic: Validacion de Datos",
+                "Content": "Pydantic utiliza tipos de Python para validar datos en tiempo de ejecucion. Permite definir modelos con campos tipados, validaciones personalizadas, y serializacion automatica a JSON. Es la base de FastAPI y se usa ampliamente en configuraciones, lectura de variables de entorno y parsing de datos."
+            },
+            {
+                "id": 5,
+                "title": "REST API con FastAPI",
+                "Content": "Construir una REST API con FastAPI es sencillo: defines rutas con decoradores, usas Pydantic para los modelos de datos, y automaticamente obtienes documentacion interactiva en /docs. Incluye manejo de errores, dependencias, autenticacion JWT, y conexion a bases de datos con SQLAlchemy o Tortoise-ORM."
+            },
+            {
+                "id": 6,
+                "title": "SQLAlchemy ORM Avanzado",
+                "Content": "SQLAlchemy es el ORM mas potente de Python. Permite mapear objetos a tablas de base de datos, escribir consultas complejas, y manejar relaciones entre tablas. Incluye soporte para migraciones con Alembic y funciona con multiples bases de datos como PostgreSQL, MySQL y SQLite."
+            },
+            {
+                "id": 7,
+                "title": "Autenticacion JWT en APIs",
+                "Content": "JWT (JSON Web Tokens) es un estandar para autenticacion en APIs. Se basa en tokens firmados que contienen informacion del usuario y expiran en un tiempo determinado. En FastAPI se integra facilmente con OAuth2PasswordBearer y la libreria python-jose para crear y verificar tokens."
+            }
+        ]
+
+        return data
