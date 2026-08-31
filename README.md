@@ -1,5 +1,7 @@
-# 🚀 FastAPI Learning Examples
-
+# FastAPI Learning Examples
+<p align="center">
+  <img src="https://github.com/moleculax/Aprende_fastAPI/blob/main/fastAPI.png?raw=true" alt="FastAPI Logo" width="800">
+</p>
 ## ¿Qué es FastAPI?
 
 **FastAPI** es un framework web moderno y de alto rendimiento para construir APIs con Python 3.8+. Está basado en los estándares **OpenAPI** y **JSON Schema**, lo que permite generar documentación automática e interactiva.
