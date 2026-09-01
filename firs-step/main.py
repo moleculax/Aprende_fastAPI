@@ -2,7 +2,11 @@
 from fastapi import FastAPI, Query, Body
 from fastapi.responses import JSONResponse
 from typing import Optional
+
+from pydantic import BaseModel
+
 from data.datablog import BlogData
+from modelos.ApiResponse import ApiResponse
 from modelos.postBlog import PostBase, UpdatePost
 
 """
@@ -28,9 +32,17 @@ BLOG_POST = losDatos.objetoDatos()
 # Aqui heredo de PostBase que esta en modelos
 class PostCreate(PostBase):
     pass
+
 class ActualizaPost(UpdatePost):
     pass
 
+# Heredo de PostBase los datos y solo agrego lo que me falta (id)
+class PostPublic(PostBase):
+    id: int
+
+class PostSummary(BaseModel):
+    id: int
+    title: str
 # =============================================
 
 @app.get("/")
@@ -52,9 +64,18 @@ def get_post_by_id(post_id: int):
     """Obtener un post por su ID"""
     for post in BLOG_POST:
         if post["id"] == post_id:
-            return {"data": post}
+            # return {
+            #     "status": True,
+            #     "data": post
+            # }
+            return ApiResponse(
+                status=True,
+                data=post,
+                message="Post encontrado"
+            ).send()
 
     return JSONResponse(
+        status = False,
         status_code=404,
         content={"error": f"Post con ID {post_id} no encontrado"}
     )
@@ -63,41 +84,44 @@ def get_post_by_id(post_id: int):
 # AQUI USARE QUERY PARAM
 @app.get("/posts")
 def list_post(
-            query: Optional[str] = Query(
-                None,
-                description="Texto del titulo a buscar",
-                min_length=1,
-                max_length=50,
-                example=""
-            ),
-            limit: Optional[int] = Query(
-                50,
-                description="Limite de resultados",
-                ge=1,
-                le=100
-            )
-        ):
+        query: Optional[str] = Query(
+            None,
+            description="Texto del titulo a buscar",
+            min_length=1,
+            max_length=50,
+            example=""
+        ),
+        limit: Optional[int] = Query(
+            50,
+            description="Limite de resultados",
+            ge=1,
+            le=100
+        )
+):
     if query:
-        # Buscar posts que coincidan con la query
-        result = [
-            post for post in BLOG_POST
-            if query.lower() in post["title"].lower()
-               or query.lower() in post["Content"].lower()
-        ]
+        # Buscar posts que coincidan con la query (separado)
+        result = []
+        query_lower = query.lower()
+
+        for post in BLOG_POST:
+            if query_lower in post["title"].lower() or query_lower in post["Content"].lower():
+                result.append(post)
 
         # Aplicar límite
         result = result[:limit]
 
         return {
+            "status": True,
             "data": result,
             "query": query,
             "total": len(result),
             "limit": limit
         }
 
-        # Si no hay query, devolver todos con límite
+    # Si no hay query, devolver todos con límite
     return {
-        "data": BLOG_POST[:limit],
+        "status": True,
+        "data": BLOG_POST,
         "query": None,
         "total": len(BLOG_POST[:limit]),
         "limit": limit

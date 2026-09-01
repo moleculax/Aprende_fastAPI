@@ -9,6 +9,8 @@ from typing import Optional
     en tiempo de ejecución.
 """
 
+PALABRAS_NO_PERMITIDAS = ["porn","violencia", "droga", "racismo","spam","pornografia","sexo"]
+
 # Modelo Pydantic para crear posts
 class PostBase(BaseModel):
     title: str = Field(..., min_length=10, max_length=100,
@@ -31,4 +33,4 @@ class UpdatePost(BaseModel):
     Content: Optional[str] = None  # para cuando actualice solo el titulo y no el contenido, lo pongo como opcional
 
 
-PALABRAS_NO_PERMITIDAS = ["porn","violencia", "droga", "racismo","spam","pornografia","sexo"]
+
