@@ -12,7 +12,7 @@ ENV/
 env.bak/
 venv.bak/
 pythonenv*
-
+.env
 # ================================
 # Distribución / Empaquetado
 # ================================
@@ -68,19 +68,13 @@ dmypy.json
 # ================================
 # Sistemas Operativos
 # ================================
-# Windows
+
 Thumbs.db
 ehthumbs.db
 Desktop.ini
 *.tmp
 
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-._*
-.Spotlight-V100
-.Trashes
+
 
 # Linux
 *.log
@@ -113,7 +107,6 @@ pytest.log
 .env.*.local
 *.local
 secrets.py
-config.py
 
 # ================================
 # Archivos de Pruebas
@@ -155,8 +148,7 @@ htmlcov/
 # Docker
 # ================================
 .dockerignore
-Dockerfile
-docker-compose.yml
+
 
 # ================================
 # Archivos de Dependencias
@@ -201,7 +193,6 @@ docs/api/
 # Archivos de Pruebas de Carga
 # ================================
 *.jmx
-*.csv
 *.jtl
 
 # ================================
