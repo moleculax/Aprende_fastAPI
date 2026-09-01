@@ -1,6 +1,17 @@
-# First Step EN FastAPI
+# First Step EN FastAPI Ejemplo para testear
 
 Una API REST simple construida con FastAPI . Este proyecto demuestra operaciones CRUD básicas (Crear, Leer, Actualizar, Eliminar) con FastAPI.
+
+
+| Tecnología | Badge |
+|------------|-------|
+| **FastAPI** | [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/) |
+| **Python** | [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/) |
+| **Pydantic** | [![Pydantic](https://img.shields.io/badge/Pydantic-E92063?style=for-the-badge&logo=pydantic&logoColor=white)](https://docs.pydantic.dev/) |
+| **Pandas** | [![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/) |
+| **OpenAPI** | [![OpenAPI](https://img.shields.io/badge/OpenAPI-3.1.0-6BA539?style=for-the-badge&logo=openapiinitiative&logoColor=white)](https://www.openapis.org/) |
+| **JSON Schema** | [![JSON Schema](https://img.shields.io/badge/JSON%20Schema-Draft%2007-6BA539?style=for-the-badge&logo=jsonschema&logoColor=white)](https://json-schema.org/) |
+
 
 ## Características
 
@@ -10,6 +21,9 @@ Una API REST simple construida con FastAPI . Este proyecto demuestra operaciones
 - **Documentación automática**: Swagger UI y ReDoc
 - **Validación de datos**: Validación de campos requeridos y vacíos
 - **Manejo de errores**: Respuestas HTTP con códigos de estado apropiados
+- **Usa al inicio datos por defecto**: Cuando el DataFrame no tiene datos
+- **Crea DataFrame usando Pandas**: Para Almacenar datos
+- **Crea archivo CSV/JSON**: Para los datos que usara en el CRUD
 
 ## Requisitos Previos
 
@@ -55,13 +69,6 @@ Swagger UI: http://localhost:8000/docs
 
 ReDoc: http://localhost:8000/redoc
 
-## Estructura del Proyecto
-```
-first-step-mini-blog/
-├── main.py                 # Código principal de la API
-├── requirements.txt        # Dependencias del proyecto
-├── README.md              # Este archivo
-└── venv/                  # Entorno virtual (no incluido)
-```
+
 
 

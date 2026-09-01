@@ -1,6 +1,21 @@
+import pandas as pd
+import os
+import json
 
 class BlogData:
     def objetoDatos(self):
+        # Leer el JSON generado
+        path = "data/archivos/dataBlog.json"
+
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return data
+        except FileNotFoundError:
+            # Si no existe, usar datos iniciales
+            return self._datos_iniciales()
+
+    def _datos_iniciales(self):
         data = [
             {
                 "id": 1,
@@ -40,3 +55,117 @@ class BlogData:
         ]
 
         return data
+
+
+# ===================================================================
+class CreoDataFrame:
+
+    def dataFrame(self):
+        objdatos = BlogData()
+        obj = objdatos.objetoDatos()
+        df = pd.DataFrame(obj)
+        path = "data/archivos/"
+        file = "dataBlog.csv"
+        os.makedirs(path, exist_ok=True)
+        df.to_csv(f'{path}{file}', index=False)
+        return df
+
+    def agregarEnDataFrame(self, title, content):
+        """Agregar un nuevo post y retornar DataFrame actualizado"""
+        objdatos = BlogData()
+        data = objdatos.objetoDatos()
+        new_id = max([post["id"] for post in data]) + 1 if data else 1
+        new_post = {
+            "id": new_id,
+            "title": title,
+            "Content": content
+        }
+        data.append(new_post)
+
+        df = pd.DataFrame(data)
+
+        path = "data/archivos/"
+        file = "dataBlog.csv"
+        fileJSON = "dataBlog.json"
+        os.makedirs(path, exist_ok=True)
+        # Genera archivo csv
+        df.to_csv(f'{path}{file}', index=False)
+        # Genera JSON
+        df.to_json(f'{path}{fileJSON}', orient='records',)
+
+        return df
+
+    def actualizarEnDataFrame(self, post_id, title=None, content=None):
+        """Actualizar un post existente por su ID"""
+        objdatos = BlogData()
+        data = objdatos.objetoDatos()
+
+        for post in data:
+            if post["id"] == post_id:
+                if title is not None:
+                    post["title"] = title
+                if content is not None:
+                    post["Content"] = content
+
+                df = pd.DataFrame(data)
+
+                path = "data/archivos/"
+                file = "dataBlog.csv"
+                fileJSON = "dataBlog.json"
+                os.makedirs(path, exist_ok=True)
+                df.to_csv(f'{path}{file}', index=False)
+                df.to_json(f'{path}{fileJSON}', orient='records')
+
+                return df
+
+        print(f"Post con ID {post_id} no encontrado")
+        return pd.DataFrame(data)
+
+    def eliminarEnDataFrame(self, post_id):
+        """Eliminar un post por su ID"""
+        objdatos = BlogData()
+        data = objdatos.objetoDatos()
+
+        for i, post in enumerate(data):
+            if post["id"] == post_id:
+                eliminado = data.pop(i)
+
+                df = pd.DataFrame(data)
+
+                path = "data/archivos/"
+                file = "dataBlog.csv"
+                fileJSON = "dataBlog.json"
+                os.makedirs(path, exist_ok=True)
+                df.to_csv(f'{path}{file}', index=False)
+                df.to_json(f'{path}{fileJSON}', orient='records')
+                print(f" Post con ID {post_id} eliminado")
+                return df
+
+        print(f"Post con ID {post_id} no encontrado")
+        return pd.DataFrame(data)
+
+    def actualizarCampo(self, post_id, campo, valor):
+        """Actualizar un campo específico de un post"""
+        objdatos = BlogData()
+        data = objdatos.objetoDatos()
+
+        for post in data:
+            if post["id"] == post_id:
+                if campo in post:
+                    post[campo] = valor
+
+                    df = pd.DataFrame(data)
+
+                    path = "data/archivos/"
+                    file = "dataBlog.csv"
+                    os.makedirs(path, exist_ok=True)
+                    df.to_csv(f'{path}{file}', index=False)
+
+                    print(f" Campo '{campo}' actualizado para ID {post_id}")
+                    return df
+                else:
+                    print(f" Campo '{campo}' no existe en el post")
+                    return pd.DataFrame(data)
+
+        print(f"❌ Post con ID {post_id} no encontrado")
+        return pd.DataFrame(data)

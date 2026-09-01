@@ -4,7 +4,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from data.datablog import BlogData
+from data.datablog import BlogData, CreoDataFrame
 from modelos.ApiRespuestas.ApiResponse import ApiResponse
 from modelos.ApiRespuestas.ApiException import  ApiException
 from modelos.ModelopostBlog import PostBase, UpdatePost, Etiquetas
@@ -57,8 +57,6 @@ def home():
     }
 
     return contenido
-
-
 
 # ======================================================
 # Path parameters
@@ -151,6 +149,7 @@ def list_post(
 # Los tres puntos se llaman elipsi
 # Body(None) no es obligatorio
 def create_post(post: PostCreate):
+
     try:
         # Verificar que title no esté vacío
         if not post.title.strip():
@@ -174,6 +173,8 @@ def create_post(post: PostCreate):
                     }
         # Agrego a la lista
         BLOG_POST.append(new_post)
+        # Aqui Instancio para almacenar datos en el DataFrame que crea el csv
+        CreoDataFrame().agregarEnDataFrame(post.title, post.Content)
 
         # Retornar respuesta
         return {
@@ -208,8 +209,9 @@ def update_post(post_id: int, data: ActualizaPost):
 
                 post["title"] = data.title
                 post["Content"] = data.Content
-                # Esto agrega nueva clave valor temporal solo prueba
-                # post["autor"] = "Autor Desconocido"
+                # Actualizo el DataFrame y el CSV
+                CreoDataFrame().actualizarEnDataFrame(post_id, data.title, data.Content)
+                # ======================================================================
 
                 return {
                     "status": True,
@@ -241,7 +243,9 @@ def delete_post(post_id: int):
                     "message": "Post eliminado exitosamente",
                     "data": post_eliminado
                 }
-
+        # Aqui Instancio para eliminar dato del DataFrame que crea el csv
+        CreoDataFrame().eliminarEnDataFrame(post_id)
+        # ================================================================
         return JSONResponse(
             status_code=404,
             content={"error": f"Post con ID {post_id} no encontrado"}
