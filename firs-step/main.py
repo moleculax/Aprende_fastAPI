@@ -1,13 +1,13 @@
-
-from fastapi import FastAPI, Query, Body
+from fastapi import FastAPI, Query
 from fastapi.responses import JSONResponse
 from typing import Optional
 
 from pydantic import BaseModel
 
 from data.datablog import BlogData
-from modelos.ApiResponse import ApiResponse
-from modelos.postBlog import PostBase, UpdatePost
+from modelos.ApiRespuestas.ApiResponse import ApiResponse
+from modelos.ApiRespuestas.ApiException import  ApiException
+from modelos.ModelopostBlog import PostBase, UpdatePost, Etiquetas
 
 """
 https://www.linkedin.com/in/moleculax/
@@ -43,6 +43,9 @@ class PostPublic(PostBase):
 class PostSummary(BaseModel):
     id: int
     title: str
+
+class Tab(Etiquetas):
+    pass
 # =============================================
 
 @app.get("/")
@@ -62,23 +65,30 @@ def home():
 @app.get("/posts/{post_id}")
 def get_post_by_id(post_id: int):
     """Obtener un post por su ID"""
-    for post in BLOG_POST:
-        if post["id"] == post_id:
-            # return {
-            #     "status": True,
-            #     "data": post
-            # }
-            return ApiResponse(
-                status=True,
-                data=post,
-                message="Post encontrado"
-            ).send()
+    try:
+        for post in BLOG_POST:
+            if post["id"] == post_id:
+                # return {
+                #     "status": True,
+                #     "data": post
+                # }
+                return ApiResponse(
+                    status=True,
+                    data=post,
+                    message="Post encontrado"
+                ).send()
 
-    return JSONResponse(
-        status = False,
-        status_code=404,
-        content={"error": f"Post con ID {post_id} no encontrado"}
-    )
+        return ApiResponse(
+            status=False,
+            message=f"Post con ID {post_id} no encontrado",
+            status_code=404
+        ).send()
+    except Exception as e:
+        return ApiException(
+            status=False,
+            message=str(e),
+            status_code=500
+        ).send()
 # ======================================================
 
 # AQUI USARE QUERY PARAM
@@ -98,34 +108,41 @@ def list_post(
             le=100
         )
 ):
-    if query:
-        # Buscar posts que coincidan con la query (separado)
-        result = []
-        query_lower = query.lower()
+    try:
+        if query:
+            # Buscar posts que coincidan con la query (separado)
+            result = []
+            query_lower = query.lower()
 
-        for post in BLOG_POST:
-            if query_lower in post["title"].lower() or query_lower in post["Content"].lower():
-                result.append(post)
+            for post in BLOG_POST:
+                if query_lower in post["title"].lower() or query_lower in post["Content"].lower():
+                    result.append(post)
 
-        # Aplicar límite
-        result = result[:limit]
+            # Aplicar límite
+            result = result[:limit]
 
+            return {
+                "status": True,
+                "data": result,
+                "query": query,
+                "total": len(result),
+                "limit": limit
+            }
+
+        # Si no hay query, devolver todos con límite
         return {
             "status": True,
-            "data": result,
-            "query": query,
-            "total": len(result),
+            "data": BLOG_POST,
+            "query": None,
+            "total": len(BLOG_POST[:limit]),
             "limit": limit
         }
-
-    # Si no hay query, devolver todos con límite
-    return {
-        "status": True,
-        "data": BLOG_POST,
-        "query": None,
-        "total": len(BLOG_POST[:limit]),
-        "limit": limit
-    }
+    except Exception as e:
+        return ApiException(
+            status=False,
+            message=str(e),
+            status_code=500
+        ).send()
 # ======================================================
 
 # Implento metodo post
@@ -165,70 +182,75 @@ def create_post(post: PostCreate):
             "data": new_post
         }
     except Exception as e:
-        return JSONResponse(
-            status_code=500,
-            content={"error": str(e)}
-        )
+        return ApiException(
+            status=False,
+            message=str(e),
+            status_code=500
+        ).send()
 
 
 @app.put("/posts/{post_id}")
 def update_post(post_id: int, data: ActualizaPost):
     """Actualizar completamente un post existente"""
+    try:
+        for post in BLOG_POST:
+            if post["id"] == post_id:
+                if not data.title.strip():
+                    return JSONResponse(
+                        status_code=400,
+                        content={"error": "Title no puede estar vacio"}
+                    )
+                if not data.Content.strip():
+                    return JSONResponse(
+                        status_code=400,
+                        content={"error": "Content no puede estar vacio"}
+                    )
 
-    for post in BLOG_POST:
-        if post["id"] == post_id:
-            if  not  data.Content not in data:
-                return JSONResponse(
-                    status_code=400,
-                    content={"error": "Title y Content son requeridos"}
-                )
+                post["title"] = data.title
+                post["Content"] = data.Content
+                # Esto agrega nueva clave valor temporal solo prueba
+                # post["autor"] = "Autor Desconocido"
 
-            if not data.title.strip():
-                return JSONResponse(
-                    status_code=400,
-                    content={"error": "Title no puede estar vacio"}
-                )
-            if not data.Content.strip():
-                return JSONResponse(
-                    status_code=400,
-                    content={"error": "Content no puede estar vacio"}
-                )
+                return {
+                    "status": True,
+                    "message": "Post Actualizado Completamente",
+                    "data": post
+                }
 
-            post["title"] = data.title
-            post["Content"] = data.Content
-            # Esto agrega nueva clave valor temporal solo prueba
-            # post["autor"] = "Autor Desconocido"
+        return JSONResponse(
+            status_code=404,
+            content={"error": f"Post con ID {post_id} no encontrado"}
+        )
+    except Exception as e:
+        return ApiException(
+            status=False,
+            message=str(e),
+            status_code=500
+        ).send()
 
-            return {
-                "status": True,
-                "message": "Post Actualizado Completamente",
-                "data": post
-            }
-
-    return JSONResponse(
-        status_code=404,
-        content={"error": f"Post con ID {post_id} no encontrado"}
-    )
 
 
 @app.delete("/posts/{post_id}")
 def delete_post(post_id: int):
-    for index, post in enumerate(BLOG_POST):
-        if post["id"] == post_id:
-            post_eliminado = BLOG_POST.pop(index)  #  Elimino por índice
-            return {
-                "status": True,
-                "message": "Post eliminado exitosamente",
-                "data": post_eliminado
-            }
+    try:
+        for index, post in enumerate(BLOG_POST):
+            if post["id"] == post_id:
+                post_eliminado = BLOG_POST.pop(index)  #  Elimino datos por el  índice
+                return {
+                    "status": True,
+                    "message": "Post eliminado exitosamente",
+                    "data": post_eliminado
+                }
 
-    return JSONResponse(
-        status_code=404,
-        content={"error": f"Post con ID {post_id} no encontrado"}
-    )
-
+        return JSONResponse(
+            status_code=404,
+            content={"error": f"Post con ID {post_id} no encontrado"}
+        )
+    except Exception as e:
+        return ApiException(
+            status=False,
+            message=str(e),
+            status_code=500
+        ).send()
 
 # =========================================================================
-# curl -X POST http://localhost:8000/posts \
-#   -H "Content-Type: application/json" \
-#   -d '{"title": "Nuevo Post", "Content": "Contenido del nuevo post"}'

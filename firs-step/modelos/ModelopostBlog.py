@@ -33,4 +33,12 @@ class UpdatePost(BaseModel):
     Content: Optional[str] = None  # para cuando actualice solo el titulo y no el contenido, lo pongo como opcional
 
 
+class Etiquetas(BaseModel):
+    name: str = Field(...,
+                      min_length=3,
+                      max_length=30,
+                      description="El nombre de la pestaña debe tener entre 3 y 50 caracteres"
+                      )
+
+
 
