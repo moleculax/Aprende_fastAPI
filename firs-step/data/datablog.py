@@ -25,7 +25,7 @@ class BlogData:
             {
                 "id": 5,
                 "title": "REST API con FastAPI",
-                "Content": "Construir una REST API con FastAPI es sencillo: defines rutas con decoradores, usas Pydantic para los modelos de datos, y automaticamente obtienes documentacion interactiva en /docs. Incluye manejo de errores, dependencias, autenticacion JWT, y conexion a bases de datos con SQLAlchemy o Tortoise-ORM."
+                "Content": "Construir una REST API con FastAPI es sencillo: defines rutas con decoradores, usas Pydantic para los modelos de datos, y automaticamente obtienes documentacion interactiva en /docs. Incluye manejo de errores, dependencias, autenticacion JWT, y core a bases de datos con SQLAlchemy o Tortoise-ORM."
             },
             {
                 "id": 6,

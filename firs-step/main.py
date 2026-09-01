@@ -68,10 +68,10 @@ def list_post(
                 description="Texto del titulo a buscar",
                 min_length=1,
                 max_length=50,
-                example="FastAPI"
+                example=""
             ),
             limit: Optional[int] = Query(
-                10,
+                50,
                 description="Limite de resultados",
                 ge=1,
                 le=100
@@ -109,7 +109,7 @@ def list_post(
 # Body(...) indica que es obligatorio enviar contenido
 # Los tres puntos se llaman elipsi
 # Body(None) no es obligatorio
-def create_post(post: PostCreate = Body(...)):
+def create_post(post: PostCreate):
     try:
         # Verificar que title no esté vacío
         if not post.title.strip():
@@ -136,6 +136,7 @@ def create_post(post: PostCreate = Body(...)):
 
         # Retornar respuesta
         return {
+            "status": True,
             "message": "Post creado exitosamente",
             "data": new_post
         }
@@ -147,7 +148,7 @@ def create_post(post: PostCreate = Body(...)):
 
 
 @app.put("/posts/{post_id}")
-def update_post(post_id: int, data: ActualizaPost = Body(...)):
+def update_post(post_id: int, data: ActualizaPost):
     """Actualizar completamente un post existente"""
 
     for post in BLOG_POST:
@@ -171,6 +172,8 @@ def update_post(post_id: int, data: ActualizaPost = Body(...)):
 
             post["title"] = data.title
             post["Content"] = data.Content
+            # Esto agrega nueva clave valor temporal solo prueba
+            # post["autor"] = "Autor Desconocido"
 
             return {
                 "status": True,
