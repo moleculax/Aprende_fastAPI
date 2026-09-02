@@ -23,7 +23,7 @@ Una API REST simple construida con FastAPI . Este proyecto demuestra operaciones
 - **Manejo de errores**: Respuestas HTTP con códigos de estado apropiados
 - **Usa al inicio datos por defecto**: Cuando el DataFrame no tiene datos
 - **Crea DataFrame usando Pandas**: Para Almacenar datos
-- **Crea archivo CSV/JSON**: Para los datos que usara en el CRUD
+- **Crea archivo CSV/JSON/HTML**: Cuando se tratan los datos  en el CRUD
 
 ## Requisitos Previos
 

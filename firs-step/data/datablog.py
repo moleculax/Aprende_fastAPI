@@ -87,11 +87,14 @@ class CreoDataFrame:
         path = "data/archivos/"
         file = "dataBlog.csv"
         fileJSON = "dataBlog.json"
+        fileHTML = "dataBlog.html"
         os.makedirs(path, exist_ok=True)
         # Genera archivo csv
         df.to_csv(f'{path}{file}', index=False)
         # Genera JSON
         df.to_json(f'{path}{fileJSON}', orient='records',)
+        # Genera HTML
+        df.to_html(f'{path}{fileHTML}', index=False)
 
         return df
 
@@ -112,9 +115,11 @@ class CreoDataFrame:
                 path = "data/archivos/"
                 file = "dataBlog.csv"
                 fileJSON = "dataBlog.json"
+                fileHTML = "dataBlog.html"
                 os.makedirs(path, exist_ok=True)
                 df.to_csv(f'{path}{file}', index=False)
                 df.to_json(f'{path}{fileJSON}', orient='records')
+                df.to_html(f'{path}{fileHTML}', index=False)
 
                 return df
 
@@ -135,9 +140,11 @@ class CreoDataFrame:
                 path = "data/archivos/"
                 file = "dataBlog.csv"
                 fileJSON = "dataBlog.json"
+                fileHTML = "dataBlog.html"
                 os.makedirs(path, exist_ok=True)
                 df.to_csv(f'{path}{file}', index=False)
                 df.to_json(f'{path}{fileJSON}', orient='records')
+                df.to_html(f'{path}{fileHTML}', index=False)
                 print(f" Post con ID {post_id} eliminado")
                 return df
 
@@ -158,8 +165,10 @@ class CreoDataFrame:
 
                     path = "data/archivos/"
                     file = "dataBlog.csv"
+                    fileHTML = "dataBlog.html"
                     os.makedirs(path, exist_ok=True)
                     df.to_csv(f'{path}{file}', index=False)
+                    df.to_html(f'{path}{fileHTML}', index=False)
 
                     print(f" Campo '{campo}' actualizado para ID {post_id}")
                     return df

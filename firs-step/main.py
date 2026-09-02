@@ -4,6 +4,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from core.conexionDB import ConectaSQLite, ConectaPostgres
 from data.datablog import BlogData, CreoDataFrame
 from modelos.ApiRespuestas.ApiResponse import ApiResponse
 from modelos.ApiRespuestas.ApiException import  ApiException
@@ -50,12 +51,19 @@ class Tab(Etiquetas):
 
 @app.get("/")
 def home():
+    # Obtener versión
+    version = ConectaSQLite.VersionLite()
+    versioPG = ConectaPostgres.VersionPostgres()
+    # O conexión directa
+    # conn = ConectaSQLite.ConexionLite()
+
     contenido = {
         "message": "Bienvenido esta es una prueba en fastAPI ...",
-        "version": "1.0.0",
-        "endpoints": ["/", "/posts", "/posts/{id}"]
+        "versionAPP": "1.0.0",
+        # "endpoints": ["/", "/posts", "/posts/{id}"],
+        "SQLITE_VERSION": version,
+        "POSTGRES_VERSION": versioPG
     }
-
     return contenido
 
 # ======================================================
@@ -169,7 +177,8 @@ def create_post(post: PostCreate):
         new_id = (BLOG_POST[-1]["id"]+1) if BLOG_POST else 1
         new_post = {"id": new_id,
                     "title": post.title,
-                    "Content": post.Content
+                    "Content": post.Content,
+                    "Tags": post.Tags
                     }
         # Agrego a la lista
         BLOG_POST.append(new_post)
