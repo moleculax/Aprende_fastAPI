@@ -1,46 +1,103 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
-from fastapi.templating import Jinja2Templates
-from starlette.staticfiles import StaticFiles
+from fastapi import FastAPI, Query
+from fastapi.responses import JSONResponse
 
-from app.core.database import ConectaSQLLITE, ConectaPOSTGRES, ConectaMYSQL
 
+from core.conexionDB import ConectaPostgres
+
+from modelos.ApiRespuestas.ApiException import  ApiException
+from repositories.ListAutoresRepositories import Autores
+from repositories.BookRepositories import LibrosDeAutores
+
+"""
+https://www.linkedin.com/in/moleculax/
+http://moleculaxapp.vercel.app
+"""
+"""
+Este es un ejemplo basico sobre fastAPI
+"""
 app = FastAPI(
-    title="Test SQLite",
-    description="Test de conexión a SQLite",
+    title="second Step",
+    description="API simple de fastAPI/POSTGRES",
     version="1.0.0"
 )
 
-# Para servir archivos estáticos
-app.mount("/static", StaticFiles(directory="static"), name="static")
-# =========================================================================
-# Configurar templates para html
-templates = Jinja2Templates(directory="templates")
-# =========================================================================
 
-@app.get("/", response_class=HTMLResponse)
-def home(request: Request):
-    return FileResponse("templates/home/index.html")
 
-@app.get("/conn")
-def conexion_sqlite():
-    conn = ConectaSQLLITE.create_connection()
-    if conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT sqlite_version();")
-        version = cursor.fetchone()
-        conn.close()
+
+
+
+@app.get("/")
+def home():
+    # Obtener versión
+    versioPG = ConectaPostgres.VersionPostgres()
+
+    contenido = {
+        "message": "SE USA POSTGRES COMO BASE DE DATOS ...",
+        "versionAPP": "1.0.0",
+         "endpoints": ["/",  "/docs"],
+        "POSTGRES_VERSION": versioPG,
+    }
+    return contenido
+
+
+
+# ============== DESDE AQUI USO POSTGRES =========================
+# ============== AUTORES =========================================
+@app.get("/autores")
+def getAutoresAll():
+    try:
+
+        autores_repo = Autores()
+        autores = autores_repo.obtener_todos()
         return {
-            "status": "success",
-            "message": "Conexión exitosa a SQLite",
-            "version_sqlite": version[0],
-            "database": ConectaSQLLITE.DATABASE_URL
+            "status": True,
+            "data": [autor.__dict__ for autor in autores],
+            "message": "Autores obtenidos exitosamente"
         }
-    else:
-        return JSONResponse(
-            status_code=500,
-            content={
-                "status": "error",
-                "message": "Error al conectar con la base de datos"
+    except Exception as e:
+        return ApiException(
+            status=False,
+            message=str(e),
+            status_code=500
+        ).send()
+
+@app.get("/autores/{id_autor}")
+def getautorID(id_autor: int):
+    try:
+        autoresDatos = Autores()
+        autor = autoresDatos.obtener_por_id(id_autor)
+        if autor:
+            return {
+                "status": True,
+                "data": autor,
+                "message": "Autor obtenido exitosamente"
             }
-        )
+    except Exception as e:
+        return ApiException(
+            status=False,
+            message=str(e),
+            status_code=500
+        ).send()
+
+# ============== LIBROS DE AUTORES ======================
+# __dict__ es un atributo de Python que almacena todos los atributos de un objeto en forma de diccionario.
+@app.get("/libros")
+def getTodosLosLibros():
+    try:
+        libros_repo = LibrosDeAutores()
+        librosDatos = libros_repo.obtener_todos()
+        losLibros = []
+        for libros in librosDatos:
+            losDatos = libros.__dict__
+            losLibros.append(losDatos)
+        return {
+            "status": True,
+            "data": losLibros,
+            "message": "Libros obtenidos exitosamente"
+        }
+    except Exception as e:
+        return ApiException(
+            status=False,
+            message=str(e),
+            status_code=500
+        ).send()
