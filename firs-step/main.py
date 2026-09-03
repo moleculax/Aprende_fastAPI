@@ -4,12 +4,12 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from core.conexionDB import ConectaPostgres
 from data.datablog import BlogData, CreoDataFrame
 from modelos.ApiRespuestas.ApiResponse import ApiResponse
 from modelos.ApiRespuestas.ApiException import  ApiException
 from modelos.ModelopostBlog import PostBase, UpdatePost, Etiquetas
-from repositories.ListAutoresRepositories import Autores
+
+
 """
 https://www.linkedin.com/in/moleculax/
 http://moleculaxapp.vercel.app
@@ -51,14 +51,15 @@ class Tab(Etiquetas):
 
 @app.get("/")
 def home():
-    # Obtener versión
-    versioPG = ConectaPostgres.VersionPostgres()
+
 
     contenido = {
         "message": "Bienvenido esta es una prueba en fastAPI SE USA POSTGRES COMO BASE DE DATOS ...",
         "versionAPP": "1.0.0",
-         "endpoints": ["/", "/posts", "/posts/{id}", "/autores", "/docs"],
-        "POSTGRES_VERSION": versioPG,
+         "endpoints": ["/", "/posts", "/posts/{id}", "/docs"],
+        "author": "Moleculax",
+        "linkedin": "https://www.linkedin.com/in/moleculax/",
+
     }
     return contenido
 
@@ -255,25 +256,6 @@ def delete_post(post_id: int):
             status_code=404,
             content={"error": f"Post con ID {post_id} no encontrado"}
         )
-    except Exception as e:
-        return ApiException(
-            status=False,
-            message=str(e),
-            status_code=500
-        ).send()
-
-# ============== DESDE AQUI USO POSTGRES =========================
-@app.get("/autores")
-def getAutoresAll():
-    try:
-
-        autores_repo = Autores()
-        autores = autores_repo.obtener_todos()
-        return {
-            "status": True,
-            "data": [autor.__dict__ for autor in autores],
-            "message": "Autores obtenidos exitosamente"
-        }
     except Exception as e:
         return ApiException(
             status=False,
