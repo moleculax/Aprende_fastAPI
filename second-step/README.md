@@ -9,15 +9,14 @@ Una API REST simple construida con FastAPI . Este proyecto demuestra operaciones
 | **Python** | [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/) |
 | **Pydantic** | [![Pydantic](https://img.shields.io/badge/Pydantic-E92063?style=for-the-badge&logo=pydantic&logoColor=white)](https://docs.pydantic.dev/) |
 | **Pandas** | [![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/) |
+| **PostgreSQL** | [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/) |
+| **SQLAlchemy** | [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-FF7F50?style=for-the-badge&logo=sqlalchemy&logoColor=white)](https://www.sqlalchemy.org/) |
 | **OpenAPI** | [![OpenAPI](https://img.shields.io/badge/OpenAPI-3.1.0-6BA539?style=for-the-badge&logo=openapiinitiative&logoColor=white)](https://www.openapis.org/) |
 | **JSON Schema** | [![JSON Schema](https://img.shields.io/badge/JSON%20Schema-Draft%2007-6BA539?style=for-the-badge&logo=jsonschema&logoColor=white)](https://json-schema.org/) |
-
-
 ## Características
 
-- **CRUD completo**: Crear, leer, actualizar y eliminar posts
-- **Búsqueda**: Filtrar posts por título o contenido
-- **Paginación**: Limitar resultados con parámetros de consulta
+- **CRUD completo**: Crear, leer, actualizar y eliminar Datos
+- **Búsqueda**: Filtrar resultados por parámetros de consulta
 - **Documentación automática**: Swagger UI y ReDoc
 - **Validación de datos**: Validación de campos requeridos y vacíos
 - **Manejo de errores**: Respuestas HTTP con códigos de estado apropiados
