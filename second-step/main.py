@@ -1,12 +1,17 @@
 from fastapi import FastAPI, Query
 from fastapi.responses import JSONResponse
 
+from core.conexionDB import ConectaPostgres, Base, engine
 
-from core.conexionDB import ConectaPostgres
-
-from modelos.ApiRespuestas.ApiException import  ApiException
+from modelos.ApiRespuestas.ApiException import ApiException
 from repositories.ListAutoresRepositories import Autores
 from repositories.BookRepositories import LibrosDeAutores
+
+# IMPORTAR LOS MODELOS PARA QUE SE CREEN LAS TABLAS
+from models.author import Author
+from models.Book import Book
+from models.users import Users
+from services.UserServices import ServicesUsers
 
 """
 https://www.linkedin.com/in/moleculax/
@@ -21,11 +26,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-
-
-
-
-
 @app.get("/")
 def home():
     # Obtener versión
@@ -34,19 +34,26 @@ def home():
     contenido = {
         "message": "SE USA POSTGRES COMO BASE DE DATOS ...",
         "versionAPP": "1.0.0",
-         "endpoints": ["/",  "/docs"],
+        "endpoints": ["/", "/docs"],
         "POSTGRES_VERSION": versioPG,
     }
     return contenido
 
-
+# ESTO CREA TODAS LAS TABLAS QUE ESTAN EL MODELO CUANDO NO EXISTEN
+# SE JECUTA DE MANERA AUTOMATICA CUANDO SE INICIA FASTAPI
+@app.on_event("startup")
+def startup():
+    # CREA TODAS LAS TABLAS DEFINIDAS EN EL MODELO
+    Base.metadata.create_all(bind=engine)
+    print("\n ============================= \n")
+    print("Tablas creadas/verificadas")
+    print("\n ============================= \n")
 
 # ============== DESDE AQUI USO POSTGRES =========================
 # ============== AUTORES =========================================
 @app.get("/autores")
 def getAutoresAll():
     try:
-
         autores_repo = Autores()
         autores = autores_repo.obtener_todos()
         return {
@@ -69,9 +76,13 @@ def getautorID(id_autor: int):
         if autor:
             return {
                 "status": True,
-                "data": autor,
+                "data": autor.__dict__,  # ✅ Convertir a diccionario
                 "message": "Autor obtenido exitosamente"
             }
+        return JSONResponse(
+            status_code=404,
+            content={"error": f"Autor con ID {id_autor} no encontrado"}
+        )
     except Exception as e:
         return ApiException(
             status=False,
@@ -95,6 +106,32 @@ def getTodosLosLibros():
             "data": losLibros,
             "message": "Libros obtenidos exitosamente"
         }
+    except Exception as e:
+        return ApiException(
+            status=False,
+            message=str(e),
+            status_code=500
+        ).send()
+
+
+#  =========== USUARIOS =================
+@app.get("/listaUsuarios")
+def getUsuarios():
+    try:
+        listU = ServicesUsers()
+        usuarios = listU.UsuariosFull()
+        if usuarios:
+            return {
+                "status": True,
+                "data": usuarios,
+                "message": "Usuarios obtenidos exitosamente"
+            }
+        else:
+            return {
+                "status": False,
+                "data": [],
+                "message": "No se encontraron usuarios"
+            }
     except Exception as e:
         return ApiException(
             status=False,

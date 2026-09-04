@@ -1,16 +1,32 @@
 -- ============================================================
--- TABLA AUTHOR (AUTORES)
--- ============================================================
 -- Base de datos db_blog
+-- ============================================================
 
 
+-- Tabla users (usuarios)
+CREATE TABLE users
+(
+    id_users   SERIAL PRIMARY KEY,
+    usuario    VARCHAR(20) NOT NULL,
+    password   VARCHAR(20) NOT NULL,
+    email      VARCHAR(50) NOT NULL,
+    last_login TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Tabla author (autores) con relación a users
 CREATE TABLE author
 (
     id_author  SERIAL PRIMARY KEY,
     name       VARCHAR(100) NOT NULL,
     birth_date DATE NOT NULL,
+    users_id   INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT author__id_users_fk FOREIGN KEY (users_id)
+        REFERENCES users (id_users)
+        ON DELETE SET NULL
 );
 
 -- ============================================================

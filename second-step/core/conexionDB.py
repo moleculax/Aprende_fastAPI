@@ -4,115 +4,122 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-
-# ============================================================
-# BASE PARA MODELOS
-# ============================================================
 Base = declarative_base()
-# Crea la clase base para todos los modelos SQLAlchemy
-# Todos los modelos (Author, Book, Sale) heredarán de esta clase
-# Permite que SQLAlchemy mapee las clases Python a tablas de la base de datos
 
 
-# ============================================================
-# POSTGRESQL  ESTA SIENDO USADO POR DEFECTO EN ESTE MINI PROYECTO
-# ============================================================
 class ConectaPostgres:
-    # ============================================================
-    # CONFIGURACIÓN DE LA CONEXIÓN
-    # ============================================================
-    HOST = "localhost"        # Dirección del servidor PostgreSQL
-    DATABASE = "db_blog"      # Nombre de la base de datos
-    USER = "admin"            # Usuario para autenticación
-    PASSWORD = "admin123"     # Contraseña del usuario
-    PORT = "5432"             # Puerto por defecto de PostgreSQL
+    HOST = "localhost"
+    DATABASE = "db_blog"
+    USER = "admin"
+    PASSWORD = "admin123"
+    PORT = "5432"
 
     DATABASE_URL = f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
-    # Construye la URL de conexión completa con las credenciales
-    # Formato: postgresql://usuario:contraseña@host:puerto/base_datos
+    engine = None
+    SessionLocal = None
 
-    engine = None             # Almacena el motor de conexión (pool de conexiones)
-    SessionLocal = None       # Almacena la fábrica de sesiones
-
-    # ============================================================
-    # get_engine(): Obtiene o crea el motor de conexión
-    # ============================================================
     @classmethod
     def get_engine(cls):
-        # cls es la clase ConectaPostgres
-        # Si el engine no existe (es None), lo crea
+        """
+        Obtiene o crea el motor de conexión a la base de datos.
+
+        El motor es un objeto que administra el pool de conexiones.
+        Solo se crea una vez (singleton) y se reutiliza.
+
+        Returns:
+            Engine: El motor de conexión de SQLAlchemy
+        """
         if cls.engine is None:
-            # create_engine() crea un pool de conexiones a la base de datos
-            # No abre una conexión inmediatamente, solo la prepara
+            # Crea el motor solo si no existe
             cls.engine = create_engine(cls.DATABASE_URL)
-        # Retorna el engine (existente o recién creado)
         return cls.engine
-        # Uso: ConectaPostgres.get_engine()
 
-    # ============================================================
-    # get_session(): Crea una sesión para interactuar con la BD
-    # ============================================================
     @classmethod
-    def get_session(cls):
-        # Si SessionLocal no existe, la crea
-        if cls.SessionLocal is None:
-            # sessionmaker() crea una fábrica de sesiones
-            # bind=cls.get_engine() la vincula al motor de conexión
-            cls.SessionLocal = sessionmaker(
-                autocommit=False,  # No auto-guardar, requiere commit explícito
-                autoflush=False,   # No auto-enviar cambios a la BD
-                bind=cls.get_engine()
-            )
-        # Crea y retorna una nueva sesión (conexión activa a la BD)
-        return cls.SessionLocal()
-        # Uso: ConectaPostgres.get_session()
+    def get_session_factory(cls):
+        """
+        Obtiene o crea la fábrica de sesiones.
 
-    # ============================================================
-    # ConexionPostgres(): Conexión segura con manejo de errores
-    # ============================================================
+        Una sesión es un objeto que representa una transacción con la BD.
+        La get_session_factory permite crear múltiples sesiones a partir del motor.
+
+        Returns:
+            sessionmaker: Fábrica de sesiones de SQLAlchemy
+        """
+        if cls.SessionLocal is None:
+            # Crea la fábrica solo si no existe
+            cls.SessionLocal = sessionmaker(
+                autocommit=False,  # No guarda automáticamente
+                autoflush=False,  # No envía cambios automáticamente
+                bind=cls.get_engine()  # Asocia la fábrica al motor
+            )
+        return cls.SessionLocal
+
     @classmethod
     def ConexionPostgres(cls):
+        """
+        Crea y retorna una sesión activa de base de datos.
+
+        Esta función es útil cuando necesitas una sesión para operaciones
+        específicas que no requieren el contexto de FastAPI.
+
+        Returns:
+            Session: Objeto sesión de SQLAlchemy o None si hay error
+        """
         try:
-            # Intenta crear y retornar una sesión
-            return cls.get_session()
+            Session = cls.get_session_factory()
+            return Session()
         except Exception as e:
-            # Si falla, imprime el error y retorna None
             print(f"Error PostgreSQL: {e}")
             return None
-        # Uso: ConectaPostgres.ConexionPostgres()
 
-    # ============================================================
-    # VersionPostgres(): Obtiene la versión de PostgreSQL
-    # ============================================================
     @classmethod
     def VersionPostgres(cls):
-        # Obtiene una conexión a la BD
-        conn = cls.ConexionPostgres()
-        # Si la conexión es exitosa
-        if conn:
-            try:
-                # Ejecuta una consulta SQL para obtener la versión
-                result = conn.execute(text("SELECT version();"))
-                # Obtiene el primer resultado
-                version = result.fetchone()
-                # Cierra la conexión
-                conn.close()
-                # Retorna la versión (primer elemento de la tupla)
-                return version[0] if version else None
-            except Exception as e:
-                # Si falla, imprime el error y retorna None
-                print(f"Error: {e}")
-                return None
-        # Si no hay conexión, retorna None
-        return None
-        # Uso: ConectaPostgres.VersionPostgres()
+        """
+        Obtiene la versión de PostgreSQL ejecutando una consulta SQL.
+
+        Esta función demuestra cómo ejecutar SQL puro con SQLAlchemy.
+
+        Returns:
+            str: Versión de PostgreSQL o None si hay error
+        """
+        Session = cls.get_session_factory()
+        db = Session()
+        try:
+            # text() permite ejecutar SQL puro
+            result = db.execute(text("SELECT version();"))
+            version = result.fetchone()
+            return version[0] if version else None
+        finally:
+            db.close()
+
+
+# ============================================================
+# FUNCIÓN DE DEPENDENCIA PARA FASTAPI
+# ============================================================
+def get_db():
+    """
+    Función generadora que actúa como dependencia de FastAPI.
+
+    Esta función usa 'yield' para manejar el ciclo de vida de la sesión:
+    1. Crea una sesión al inicio
+    2. La entrega (yield) a la ruta de FastAPI
+    3. La cierra automáticamente al finalizar la ruta
+
+    Esto garantiza que las sesiones siempre se cierren correctamente,
+    incluso si ocurren errores durante la ejecución.
+
+    Yields:
+        Session: Sesión activa de SQLAlchemy para usar en la ruta
+    """
+    Session = ConectaPostgres.get_session_factory()
+    db = Session()
+    try:
+        yield db  # Entrega la sesión a la ruta
+    finally:
+        db.close()  # Siempre cierra la sesión al finalizar
 
 
 # ============================================================
 # EXPORTAR engine PARA REPOSITORIOS
 # ============================================================
 engine = ConectaPostgres.get_engine()
-# Crea el motor de conexión al importar este archivo
-# Los repositorios pueden usar este engine directamente
-# Ejemplo: from core.conexionDB import engine
-# Uso: with engine.connect() as conn: ...
